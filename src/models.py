@@ -12,6 +12,7 @@ Dimension Tables:
 """
 
 from datetime import datetime
+from pathlib import Path
 from sqlalchemy import (
     create_engine,
     Column,
@@ -110,13 +111,8 @@ class FactMarket(Base):
     )
 
 #SETUP
-def get_engine(db_path: str = "energy_market.db"):
+def get_engine(db_path: str | None = None):
+    """SQLite for local dev -- swap the connection string later if you want Postgres."""
+    if db_path is None:
+        db_path = str(Path(__file__).resolve().parent.parent / "energy_market.db")
     return create_engine(f"sqlite:///{db_path}", echo=False)
-
-def init_db(engine):
-    Base.metadata.create_all(engine)
-
-if __name__ == "__main__":
-    engine = get_engine()
-    init_db(engine)
-    print("Schema created successfully.")
