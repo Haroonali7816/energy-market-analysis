@@ -30,7 +30,7 @@ Base = declarative_base()
 
 #Dimension Tables
 
-class DimDateTime(Base):
+class DimDatetime(Base):
     __tablename__ = "dim_datetime"
 
     datetime_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -116,3 +116,14 @@ def get_engine(db_path: str | None = None):
     if db_path is None:
         db_path = str(Path(__file__).resolve().parent.parent / "energy_market.db")
     return create_engine(f"sqlite:///{db_path}", echo=False)
+
+
+def init_db(engine):
+    """Creates all tables if they don't already exist."""
+    Base.metadata.create_all(engine)
+
+
+if __name__ == "__main__":
+    engine = get_engine()
+    init_db(engine)
+    print("Schema created: dim_datetime, dim_region, dim_energy_source, fact_generation, fact_market")
